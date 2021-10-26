@@ -1,1 +1,202 @@
+# Problem 1
 
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+dataset = pd.DataFrame(pd.read_csv('https://raw.githubusercontent.com/rrusse33/ECGR4105/main/Homework2/diabetes.csv'))
+dataset.head()
+
+X = dataset.iloc[:,[0,1,2,3,4,5,6,7]].values
+Y = dataset.iloc[:,8].values
+
+X[0:10]
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, Y_train, Y_test = train_test_split(X,Y, test_size = .2, random_state = 0)
+
+from sklearn.preprocessing import StandardScaler
+sc_X = StandardScaler()
+X_train = sc_X.fit_transform(X_train)
+X_test = sc_X.fit_transform(X_test)
+
+#Import LogisticRegression for sklearn.linear_model
+from sklearn.linear_model import LogisticRegression
+classifier = LogisticRegression(random_state = 0)
+classifier.fit(X_train, Y_train)
+
+Y_pred = classifier.predict(X_test) 
+
+Y_pred[0:9] 
+
+from sklearn.metrics import confusion_matrix 
+cnf_matrix = confusion_matrix(Y_test, Y_pred) 
+cnf_matrix 
+
+from sklearn import metrics 
+print("Accuracy:",metrics.accuracy_score(Y_test, Y_pred)) 
+print("Precision:",metrics.precision_score(Y_test, Y_pred)) 
+print("Recall:",metrics.recall_score(Y_test, Y_pred)) 
+
+import seaborn as sns 
+class_names=[0,1] # name  of classes 
+fig, ax = plt.subplots() 
+tick_marks = np.arange(len(class_names)) 
+plt.xticks(tick_marks, class_names) 
+plt.yticks(tick_marks, class_names) 
+# create heatmap 
+sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="YlGnBu" ,fmt='g') 
+ax.xaxis.set_label_position("top") 
+plt.tight_layout() 
+plt.title('Confusion matrix', y=1.1) 
+plt.ylabel('Actual label') 
+plt.xlabel('Predicted label') 
+
+# Problem 2
+
+from sklearn.naive_bayes import GaussianNB 
+model = GaussianNB() 
+model.fit(X_train, Y_train) 
+
+Y2_pred  =  model.predict(X_test) 
+
+Y2_pred
+
+from sklearn.metrics import confusion_matrix,accuracy_score 
+cm = confusion_matrix(Y_test, Y2_pred)
+ac = accuracy_score(Y_test, Y2_pred)
+
+cm
+
+print("Accuracy:",metrics.accuracy_score(Y_test, Y2_pred))
+print("Precision:",metrics.precision_score(Y_test, Y2_pred))
+print("Recall:",metrics.recall_score(Y_test, Y2_pred))
+
+class_names=[0,1] # name  of classes 
+fig, ax = plt.subplots()
+tick_marks = np.arange(len(class_names))
+plt.xticks(tick_marks, class_names)
+plt.yticks(tick_marks, class_names)
+# create heatmap
+sns.heatmap(pd.DataFrame(cm), annot=True, cmap="YlGnBu" ,fmt='g')
+ax.xaxis.set_label_position("top")
+plt.tight_layout()
+plt.title('Confusion matrix', y=1.1)
+plt.ylabel('Actual label')
+plt.xlabel('Predicted label')
+
+#The accuracy and recall of the Naive Bays binary classifier is lower than the accuracy and
+#recall of the logistic regression model. The precision in this case is higher than the
+#precision of problem 1.
+
+# Problem 3
+
+from sklearn.model_selection import KFold
+k = 5
+kf = KFold(n_splits = k)
+for train_index, test_index in kf.split(X):
+    X_train, X_test = X[train_index,:], X[test_index,:]
+    Y_train, Y_test = Y[train_index], Y[test_index]
+    classifier.fit(X_train,Y_train)
+    Y_pred = classifier.predict(X_test) 
+    cnf_matrix = confusion_matrix(Y_test, Y_pred) 
+    cnf_matrix 
+    print("Accuracy:",metrics.accuracy_score(Y_test, Y_pred)) 
+    print("Precision:",metrics.precision_score(Y_test, Y_pred)) 
+    print("Recall:",metrics.recall_score(Y_test, Y_pred)) 
+    class_names=[0,1] # name  of classes 
+    fig, ax = plt.subplots() 
+    tick_marks = np.arange(len(class_names)) 
+    plt.xticks(tick_marks, class_names) 
+    plt.yticks(tick_marks, class_names) 
+    # create heatmap 
+    sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="YlGnBu" ,fmt='g') 
+    ax.xaxis.set_label_position("top") 
+    plt.tight_layout() 
+    plt.title('Confusion matrix', y=1.1) 
+    plt.ylabel('Actual label') 
+    plt.xlabel('Predicted label') 
+
+
+k = 10
+kf = KFold(n_splits = k)
+for train_index, test_index in kf.split(X):
+    X_train, X_test = X[train_index,:], X[test_index,:]
+    Y_train, Y_test = Y[train_index], Y[test_index]
+    classifier.fit(X_train,Y_train)
+    Y_pred = classifier.predict(X_test)
+    cnf_matrix = confusion_matrix(Y_test, Y_pred)
+    cnf_matrix
+    print("Accuracy:",metrics.accuracy_score(Y_test, Y_pred))
+    print("Precision:",metrics.precision_score(Y_test, Y_pred))
+    print("Recall:",metrics.recall_score(Y_test, Y_pred))
+    class_names=[0,1] # name of classes
+    fig, ax = plt.subplots()
+    tick_marks = np.arange(len(class_names))
+    plt.xticks(tick_marks, class_names)
+    plt.yticks(tick_marks, class_names)
+    # create heatmap
+    sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="YlGnBu" ,fmt='g') 
+    ax.xaxis.set_label_position("top")
+    plt.tight_layout()
+    plt.title('Confusion matrix', y=1.1)
+    plt.ylabel('Actual label')
+    plt.xlabel('Predicted label')
+
+#The K-fold cross-validation allows for multiple models to be made. Then the best model can be picked based off of which attribute is preferred. 
+#For the K = 5 there is one model that has a higher accuracy and recall but a lower precision than problem 1. The K = 10 training allowed for a
+#model to be made that had attributes that were all higher than problem 1.
+
+# Problem 4
+
+k = 5
+kf = KFold(n_splits = k)
+for train_index, test_index in kf.split(X):
+    X_train, X_test = X[train_index,:], X[test_index,:]
+    Y_train, Y_test = Y[train_index], Y[test_index]
+    model.fit(X_train, Y_train) 
+    Y2_pred  =  model.predict(X_test) 
+    cm = confusion_matrix(Y_test, Y2_pred)
+    print("Accuracy:",metrics.accuracy_score(Y_test, Y2_pred)) 
+    print("Precision:",metrics.precision_score(Y_test, Y2_pred)) 
+    print("Recall:",metrics.recall_score(Y_test, Y2_pred)) 
+    class_names=[0,1] # name  of classes 
+    fig, ax = plt.subplots()
+    tick_marks = np.arange(len(class_names))
+    plt.xticks(tick_marks, class_names)
+    plt.yticks(tick_marks, class_names)
+    # create heatmap
+    sns.heatmap(pd.DataFrame(cm), annot=True, cmap="YlGnBu" ,fmt='g')
+    ax.xaxis.set_label_position("top")
+    plt.tight_layout()
+    plt.title('Confusion matrix', y=1.1)
+    plt.ylabel('Actual label')
+    plt.xlabel('Predicted label')
+
+k = 10
+kf = KFold(n_splits = k)
+for train_index, test_index in kf.split(X):
+    X_train, X_test = X[train_index,:], X[test_index,:]
+    Y_train, Y_test = Y[train_index], Y[test_index]
+    model.fit(X_train, Y_train) 
+    Y2_pred  =  model.predict(X_test) 
+    cm = confusion_matrix(Y_test, Y2_pred)
+    print("Accuracy:",metrics.accuracy_score(Y_test, Y2_pred)) 
+    print("Precision:",metrics.precision_score(Y_test, Y2_pred)) 
+    print("Recall:",metrics.recall_score(Y_test, Y2_pred)) 
+    class_names=[0,1] # name  of classes 
+    fig, ax = plt.subplots()
+    tick_marks = np.arange(len(class_names))
+    plt.xticks(tick_marks, class_names)
+    plt.yticks(tick_marks, class_names)
+    # create heatmap
+    sns.heatmap(pd.DataFrame(cm), annot=True, cmap="YlGnBu" ,fmt='g')
+    ax.xaxis.set_label_position("top")
+    plt.tight_layout()
+    plt.title('Confusion matrix', y=1.1)
+    plt.ylabel('Actual label')
+    plt.xlabel('Predicted label')
+
+#K-fold cross-validation does not make sense to use for Naive Bays binary classifier. The accuracy appears to decrease
+#in most cases because the Naive Bays is based off of probabilities and no training really happens. The more folds used
+#the smaller the accuracies appear except for 1 weird case.
