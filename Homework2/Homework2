@@ -1,4 +1,4 @@
-# Problem 1
+#Problem 1
 
 import numpy as np
 import pandas as pd
@@ -12,32 +12,37 @@ Y = dataset.iloc[:,8].values
 
 X[0:10]
 
+#Splits the data
 from sklearn.model_selection import train_test_split
 X_train, X_test, Y_train, Y_test = train_test_split(X,Y, test_size = .2, random_state = 0)
 
+#Scales the data 
 from sklearn.preprocessing import StandardScaler
 sc_X = StandardScaler()
 X_train = sc_X.fit_transform(X_train)
 X_test = sc_X.fit_transform(X_test)
 
-#Import LogisticRegression for sklearn.linear_model
+#Import LogisticRegression 
 from sklearn.linear_model import LogisticRegression
 classifier = LogisticRegression(random_state = 0)
-classifier.fit(X_train, Y_train)
+classifier.fit(X_train, Y_train) #Trains model
 
-Y_pred = classifier.predict(X_test) 
+Y_pred = classifier.predict(X_test)
 
-Y_pred[0:9] 
+Y_pred[0:9]
 
+#Creates the confusion matrix
 from sklearn.metrics import confusion_matrix 
 cnf_matrix = confusion_matrix(Y_test, Y_pred) 
 cnf_matrix 
 
+#Allows matrix to be evaluated 
 from sklearn import metrics 
 print("Accuracy:",metrics.accuracy_score(Y_test, Y_pred)) 
 print("Precision:",metrics.precision_score(Y_test, Y_pred)) 
 print("Recall:",metrics.recall_score(Y_test, Y_pred)) 
 
+#Maps the confusion matrix
 import seaborn as sns 
 class_names=[0,1] # name  of classes 
 fig, ax = plt.subplots() 
@@ -52,8 +57,9 @@ plt.title('Confusion matrix', y=1.1)
 plt.ylabel('Actual label') 
 plt.xlabel('Predicted label') 
 
-# Problem 2
+#Problem 2
 
+#Creates the Naive Gaussian Bays model
 from sklearn.naive_bayes import GaussianNB 
 model = GaussianNB() 
 model.fit(X_train, Y_train) 
@@ -62,16 +68,19 @@ Y2_pred  =  model.predict(X_test)
 
 Y2_pred
 
+#Creates the confusion matrix
 from sklearn.metrics import confusion_matrix,accuracy_score 
 cm = confusion_matrix(Y_test, Y2_pred)
 ac = accuracy_score(Y_test, Y2_pred)
 
 cm
 
+#Prints out evaluations of matrix
 print("Accuracy:",metrics.accuracy_score(Y_test, Y2_pred))
 print("Precision:",metrics.precision_score(Y_test, Y2_pred))
 print("Recall:",metrics.recall_score(Y_test, Y2_pred))
 
+#Maps the confusion matrix
 class_names=[0,1] # name  of classes 
 fig, ax = plt.subplots()
 tick_marks = np.arange(len(class_names))
@@ -85,12 +94,12 @@ plt.title('Confusion matrix', y=1.1)
 plt.ylabel('Actual label')
 plt.xlabel('Predicted label')
 
-#The accuracy and recall of the Naive Bays binary classifier is lower than the accuracy and
-#recall of the logistic regression model. The precision in this case is higher than the
-#precision of problem 1.
+#The accuracy and recall of the Naive Bays binary classifier is lower than the accuracy and 
+#recall of the logistic regression model. The precision in this case is higher than the precision of problem 1.
 
-# Problem 3
+#Problem 3
 
+#Imports KFold and performs Kfold cross-validation for k = 5
 from sklearn.model_selection import KFold
 k = 5
 kf = KFold(n_splits = k)
@@ -117,7 +126,8 @@ for train_index, test_index in kf.split(X):
     plt.ylabel('Actual label') 
     plt.xlabel('Predicted label') 
 
-
+#Perform Kfold cross-validation for k = 10 where logistic regression 
+#is used as a model to train.
 k = 10
 kf = KFold(n_splits = k)
 for train_index, test_index in kf.split(X):
@@ -143,12 +153,14 @@ for train_index, test_index in kf.split(X):
     plt.ylabel('Actual label')
     plt.xlabel('Predicted label')
 
-#The K-fold cross-validation allows for multiple models to be made. Then the best model can be picked based off of which attribute is preferred. 
-#For the K = 5 there is one model that has a higher accuracy and recall but a lower precision than problem 1. The K = 10 training allowed for a
-#model to be made that had attributes that were all higher than problem 1.
+#The K-fold cross-validation allows for multiple models to be made. Then the best model can be picked based off 
+#of which attribute is preferred. For the K = 5 there is one model that has a higher accuracy and recall but a 
+#lower precision than problem 1. The K = 10 training allowed for a model to be made that had attributes that were 
+#all higher than problem 1.
 
-# Problem 4
+#Problem 4
 
+#Performs Kfold cross-validation for k = 5 and uses Naive Bays binary classifier
 k = 5
 kf = KFold(n_splits = k)
 for train_index, test_index in kf.split(X):
@@ -173,6 +185,7 @@ for train_index, test_index in kf.split(X):
     plt.ylabel('Actual label')
     plt.xlabel('Predicted label')
 
+#Performs Kfold cross-validation for k = 5 and uses Naive Bays binary classifier
 k = 10
 kf = KFold(n_splits = k)
 for train_index, test_index in kf.split(X):
@@ -197,6 +210,6 @@ for train_index, test_index in kf.split(X):
     plt.ylabel('Actual label')
     plt.xlabel('Predicted label')
 
-#K-fold cross-validation does not make sense to use for Naive Bays binary classifier. The accuracy appears to decrease
-#in most cases because the Naive Bays is based off of probabilities and no training really happens. The more folds used
-#the smaller the accuracies appear except for 1 weird case.
+#K-fold cross-validation does not make sense to use for Naive Bays binary classifier. The accuracy appears to 
+#decrease in most cases because the Naive Bays is based off of probabilities and no training really happens. 
+#The more folds used the smaller the accuracies appear except for 1 weird case.
