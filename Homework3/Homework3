@@ -207,8 +207,6 @@ ax.scatter(size,pcaRecall, marker ='o', label = 'Recall')
 ax.scatter(size,pcaPrecision, marker ='*', label = 'Precision')
 ax.legend()
 
-As the number of principle components increase it can be seen that the recall, accuracy, and precision
-increase as well. In general, the more dimensions a model is reduced by the more that accuracy is lost. 
 
 # Problem 3
 
